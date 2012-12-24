@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>adr2370 Testing Page</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width">
+</head>
+<body>
+	<div id="fb-root"></div>
+	<div class="login" style="display:none;cursor:pointer;" onclick="login();"><img src="http://www.tweekly.fm/media/image/login-facebook.png" /></div>
+	<script id="facebook-jssdk" async="" src="https://connect.facebook.net/en_US/all.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.8.2.min.js"><\/script>')</script>
+	<script src="js/three.min.js"></script>
+	<script src="js/FirstPersonControls.js"></script>
+	<script src="js/city.js"></script>
+	<script src="js/facebookCity.js"></script>
+	<script type="text/javascript">
+		function getFacebookData() {
+			if(buildings==null||buildings.length==0) {
+				$('.login').remove();
+				$('#fb-root').append('<div style="position: absolute;">w=forward<br>a=left<br>s=backward<br>d=right<br>r=up<br>f=down<br>click and drag=look around<br>right click=open friend\'s page<br></div>');
+				FB.api(
+				    {
+						method: 'fql.query',
+						query: 'SELECT page_id, name, fan_count, page_url FROM page WHERE page_id IN (SELECT page_id FROM page_fan WHERE uid = me()) ORDER BY fan_count DESC'
+				    },
+				    function(data) {
+						init();
+						friends=data;
+						var likeCount=new Array();
+						var pageNames=new Array();
+						var multiplier=friends[0].fan_count/40;
+						for(var i=0;i<friends.length;i++) {
+							likeCount.push(Math.floor(1+friends[i].fan_count/multiplier));
+							pageNames.push(friends[i].name);
+						}
+						buildings=makeCity(likeCount,pageNames);
+						controls.lat=-38;
+						controls.lon=-63;
+						controls.phi=2.242;
+						controls.theta=-1.108
+						for(var i=0;i<buildings.length;i++) {
+							scene.add(buildings[i]);
+							buildings[i].name=friends[i].page_url;
+						}
+				    }
+				);
+			}
+		}
+	</script>
+</body>
+</html>
