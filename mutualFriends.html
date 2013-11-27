@@ -49,7 +49,7 @@
 						controls.lon=-63;
 						controls.phi=2.242;
 						controls.theta=-1.108
-						for(var i=0;i<buildings.length;i++) {
+						for(var i=0;i<Math.min(200,buildings.length);i++) {
 							scene.add(buildings[i]);
 							buildings[i].name=friends[i].profile_url;
 						}
